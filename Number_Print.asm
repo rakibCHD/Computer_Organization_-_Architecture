@@ -15,7 +15,7 @@ Main PROC
                          
     LEA DX, MSG1; 
     MOV AH, 9; 
-    INT 21H;
+    INT 21H; 
    
                          
     MOV AH,1; 
