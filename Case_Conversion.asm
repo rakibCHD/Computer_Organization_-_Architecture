@@ -29,7 +29,7 @@ Main PROC
 
         ;Display the converted character
     MOV DL, char; 
-    MOV AH, 2; 
+    MOV AH, 2;  
     INT 21H;
 
         ;Exit the program
