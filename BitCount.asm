@@ -9,68 +9,71 @@ MSG4 DB 0dh,0ah, 'The number of 1 bits is: $'
 
 .CODE
 MAIN PROC
-    
-    MOV AX, @DATA  		; Initialize data segment
-    MOV DS, AX
+   
+    MOV AX,@DATA
+    MOV DS,AX
     
    
-    LEA DX, MSG1		 ; Prompt user to type a character
-    MOV AH, 9
+    LEA DX,MSG1         ;load address of msg1 to dx
+    MOV AH,9            ;display string function
+    INT 21H             ;dos interrupt
+    
+  
+    MOV AH,1            ;input character function
     INT 21H
     
    
-    MOV AH, 1			 ; Read a single character from user input
-    INT 21H
-    MOV BL, AL 			 ; Store character in BL register (ASCII value)
+    XOR BH,BH          ;Clear BH (counter for 1 bits)
+    MOV BL,AL          ;move input character to bl
     
+
+    LEA DX, MSG2
+    MOV AH,9           ;display string function 
+    INT 21H     
     
-    LEA DX, MSG2		 ; Display ASCII code info
-    MOV AH, 9
-    INT 21H
-    
-    MOV DL, BL
-    MOV AH, 2
-    INT 21H   			; Display character
 
-    
-    LEA DX, MSG3		; Print the message " IN binary is"
-    MOV AH, 9
-    INT 21H
-
-    			    	; Display the binary representation
-    MOV CX, 8 			; We need to display 8 bits
-    MOV BH, 0 			; To count the number of 1's
-
-PRINT_BINARY:
-    SHL BL, 1         	; Shift left to get the next bit
-    JC PRINT_ONE      	; If carry flag is set, it means the bit was 1
-    MOV DL, '0'       	; Otherwise, print '0'
-    JMP PRINT_BIT
-
-PRINT_ONE:
-    MOV DL, '1'      	; Print '1'
-    INC BH          	; Increment count of 1's
-    
-PRINT_BIT:
-    MOV AH, 2
-    INT 21H           	; Print the character in DL
-
-    LOOP PRINT_BINARY   ; Loop until all 8 bits are processed
-
-    				    ; Print the number of 1 bits message
-    LEA DX, MSG4
-    MOV AH, 9
+    MOV DL,BL
+    MOV AH,2            ;display character    
     INT 21H
     
-    			    	; Convert the count of 1's (in BH) to ASCII and print it
-    ADD BH, '0'        	; Convert to ASCII
-    MOV DL, BH
-    MOV AH, 2
-    INT 21H            	; Display the number of 1 bits
 
-    				    ; Terminate the program
-    MOV AH, 4Ch
+    lea dx, msg3        ; Load address of msg3 into DX
+    mov ah,9            ; Display string function
+    int 21h
+    
+    MOV CX,8            ;loop counter 8
+    MOV Bh,0            ;for 1
+            
+BINARY:
+    SHL BL,1            ;Shift left
+    JNC ZERO            ;Jump if carry flag is not set
+    INC BH              ;increase bh by 1
+    MOV DL, 31H
+    JMP DISPLAY     
+    
+ZERO:
+    MOV DL, 30h         ; keep 0 = 30h in dl
+    
+DISPLAY:
+    MOV AH,2            ;display character
+    INT 21H             ;dos interrupt
+    
+    LOOP BINARY         ;
+    ADD BH,30H          ;Convert the 1-bit count to ASCII
+    
+
+    LEA DX, MSG4        ;Load address of msg4 into DX
+    MOV AH,9
     INT 21H
-
+    
+    MOV DL,BH           ;Move 1-bit count to DL for display
+    MOV AH,2
+    INT 21H   
+    
+    
+    EXIT: 
+    MOV AH, 4Ch        ; DOS interrupt to exit
+    INT 21H  
+    
 MAIN ENDP
 END MAIN
