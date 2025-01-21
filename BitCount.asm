@@ -20,7 +20,7 @@ MAIN PROC
     
   
     MOV AH,1            ;input character function
-    INT 21H
+    INT 21H 
     
    
     XOR BH,BH          ;Clear BH (counter for 1 bits)
