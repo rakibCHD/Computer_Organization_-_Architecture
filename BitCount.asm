@@ -7,7 +7,7 @@ MSG2 DB 0dh,0ah, 'The ASCII code of: $'
 MSG3 DB 0DH,0AH, 'IN binary is: $'
 MSG4 DB 0dh,0ah, 'The number of 1 bits is: $'
 
-.CODE
+.CODE 
 MAIN PROC
    
     MOV AX,@DATA
